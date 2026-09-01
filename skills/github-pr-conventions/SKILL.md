@@ -7,6 +7,14 @@ description: MUST USE before creating or updating any GitHub pull request. Load 
 
 When creating or updating pull requests using the `gh` CLI, follow these conventions.
 
+## Guardrails
+
+- **Never `git push` directly to the default/main branch** (`main`, `master`,
+  `mainline`, or whatever the repo's default branch is called). All changes go through
+  a PR on a feature branch, even small ones.
+- **Never merge a PR yourself** — not via `gh pr merge`, not via the GitHub UI. Merging
+  is the user's decision to make; open or update the PR and hand it back to them.
+
 ## Detecting the base branch
 
 Before setting the upstream or rebasing, detect the repository's default branch:
