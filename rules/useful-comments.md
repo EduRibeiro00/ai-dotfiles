@@ -10,6 +10,7 @@ Guidelines for code comments. Write for the next person who opens the file, not 
 - No comment on a small function, or one whose name already says what it does.
 - Match the file's existing comment density. A sparse file stays sparse.
 - Never comment just to show something was considered.
+- Add a comment only when it carries real value the code doesn't already convey. When in doubt, leave it out.
 
 ## 2. Explain Why, Not What
 
@@ -29,7 +30,11 @@ Not your plan, task list, conversation, or diff. Never reference:
 - Plans, specs, or design docs — "as described in step 3"
 - Task or ticket IDs that exist only in your context
 - The conversation — "as requested", "per the feedback above"
-- The change itself — "added retry logic here", "switched from map to filter"
+
+Describe what's there now, not what used to be there or what changed to get here:
+
+- Bad: "added retry logic here", "switched from map to filter", "removed the old cache check"
+- Good: describe the current behavior, or say nothing
 
 The diff already records the change. A comment about it outlives the change and starts lying.
 
@@ -39,6 +44,7 @@ The test: would this make sense to someone opening the file in a year, knowing n
 
 **Succinct. Plain. One line if one line will do.**
 
+- Default to one line. Two lines is the max.
 - Cut every word that carries no information. A clause beats a sentence.
 - Plain language over jargon. If a simpler word works, use it.
 - No preamble — "Note that...", "It is important to understand that...".
