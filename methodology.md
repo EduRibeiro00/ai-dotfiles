@@ -31,6 +31,7 @@ Every repo an agent works in should give it enough context to operate well:
   @AGENTS.md
   ```
 
+- Alongside `AGENTS.md`, the repo should also have a simple, human-directed **`README.md`** — the usual onboarding entry point for people, kept separate from the agent-facing steering doc.
 - When there's more context than fits comfortably in `AGENTS.md`, a **`context/`** folder can hold additional `.md` files, with `AGENTS.md` pointing to or mentioning it.
 - If some of that context actually lives elsewhere (e.g. wikis, design docs), we can build a way to "pull" those changes into the `context/` folder — potentially automated with a hook — so the context folder stays a synced local copy rather than going stale.
 - For a bigger project spanning multiple repos, we can go a step further with a meta/harness repo: a repo that holds only context files (and no code of its own), with a `workspace/` subfolder where all the actual project repos get cloned. Agent sessions are then started from the root of this harness repo, so every session has the full cross-repo context plus access to all the repos it might need to touch.

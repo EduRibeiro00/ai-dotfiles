@@ -2,6 +2,8 @@
 
 A repository for managing Claude Code and OpenCode configurations, skills, rules, and settings.
 
+See [`methodology.md`](./methodology.md) for the overall philosophy behind how this repo's skills, rules, and settings are meant to be used.
+
 ## Directory Structure
 
 - **`skills/`** - Custom skill definitions for Claude Code and OpenCode
