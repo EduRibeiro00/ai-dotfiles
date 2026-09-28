@@ -36,7 +36,11 @@ Every repo an agent works in should give it enough context to operate well:
 - If some of that context actually lives elsewhere (e.g. wikis, design docs), we can build a way to "pull" those changes into the `context/` folder — potentially automated with a hook — so the context folder stays a synced local copy rather than going stale.
 - For a bigger project spanning multiple repos, we can go a step further with a meta/harness repo: a repo that holds only context files (and no code of its own), with a `workspace/` subfolder where all the actual project repos get cloned. Agent sessions are then started from the root of this harness repo, so every session has the full cross-repo context plus access to all the repos it might need to touch.
 
-## 5. Extending Superpowers
+## 5. Pulling Browser Context Locally
+
+When browsing turns up a page the agent will need (a Confluence doc, a wiki article, etc.), fetch it into a local `.md` file rather than relying on the source's CLI/MCP tool. A local snapshot is easier for the agent to search and navigate by section than what those tools typically expose.
+
+## 6. Extending Superpowers
 
 `using-superpowers` is the default entrypoint of the Superpowers skill set — it's what causes the agent to invoke the other skills. We should build our own version of this entrypoint: one that still drives the underlying superpowers skills, but also layers in whatever we've added on top and enforces our own conventions.
 
@@ -45,18 +49,18 @@ Ways to expand on the base framework:
 - More reviewer subagents, each with more specific, targeted checks.
 - Implementer agents that call additional skills as part of their normal flow (e.g. "ponytail").
 
-## 6. Planning & Increments
+## 7. Planning & Increments
 
 The dev workflow should always prioritize planning before building:
 
 - Spend real time defining what we want to do first — `brainstorming` and `writing-plans` are the right skills for this. Plans get written to `.md` files, not left in conversation.
 - Plans should be broken into increments: individual, self-contained changes that build and can be deployed on their own, with later increments building on top of earlier ones. Increments should form a DAG — or at minimum a sequential chain.
 
-## 7. Ticket Tracking Integration
+## 8. Ticket Tracking Integration
 
 A "backlog" skill can act as the bridge between agents and whatever project/ticket tracker we use (e.g. Jira). Once a plan is settled, this skill creates tickets for its tasks/increments, and keeps them updated as work progresses.
 
-## 8. Stacked PRs & Review Feedback
+## 9. Stacked PRs & Review Feedback
 
 Because increments build on top of each other, one increment should map to one PR by default, using stacked PRs. Agents need to know how to:
 
@@ -66,11 +70,11 @@ Because increments build on top of each other, one increment should map to one P
 - Identify which other PRs in the stack are affected by a given change.
 - Resubmit the affected PRs for review.
 
-## 9. Cross-Session Agent Collaboration
+## 10. Cross-Session Agent Collaboration
 
 We should promote communication and feedback loops between agent sessions rather than treating each session as isolated. For example: one agent runs a job and it fails; it diagnoses the error and proposes a fix to a second agent that holds the full implementation context; that second agent applies the fix, runs the build, and messages the first agent to redeploy and re-run the job. Naming sessions makes it easier to identify which agent is which in these handoffs.
 
-## 10. Autonomous Operation
+## 11. Autonomous Operation
 
 We want it to be easy to run agents autonomously — e.g. an "autopilot" skill. A few things matter for this to be safe and legible:
 
@@ -80,15 +84,15 @@ We want it to be easy to run agents autonomously — e.g. an "autopilot" skill. 
   - **Irreversible, or with real consequences** — stop development entirely and block, waiting for human input.
 - Beyond files, this information could also be pushed to a chat app (e.g. Slack), so a human can quickly see when their intervention is actually needed.
 
-## 11. Scaling Code Review
+## 12. Scaling Code Review
 
 The `code-review` skill lets agents automatically review PRs made by others, so code review doesn't become the bottleneck as more work is agent-generated.
 
-## 12. Scheduled Agent Jobs
+## 13. Scheduled Agent Jobs
 
 We should have a way to run agent jobs automatically and periodically via cron — for things like recurring code review sweeps, handling oncall tickets, or making ongoing code improvements.
 
-## 13. General Operating Principles
+## 14. General Operating Principles
 
 - Let big, verbose tasks be handled by subagents rather than bloating the main session's context.
 - Parallelize as much as possible — subagents, worktrees, and similar mechanisms.
