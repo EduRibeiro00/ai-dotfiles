@@ -65,3 +65,4 @@ Run the sync script to copy skills, rules, and settings:
 ## Other Recommended Skills & Rules
 
 - [obra/superpowers](https://github.com/obra/superpowers) - A complete software development methodology for coding agents
+- [michael-denyer/pstack-claude](https://github.com/michael-denyer/pstack-claude) - Rigorous agent workflows and engineering-principle skills (`technical-writing` and `unslop` here come from it)
