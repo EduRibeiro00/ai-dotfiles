@@ -66,3 +66,4 @@ Run the sync script to copy skills, rules, and settings:
 
 - [obra/superpowers](https://github.com/obra/superpowers) - A complete software development methodology for coding agents
 - [michael-denyer/pstack-claude](https://github.com/michael-denyer/pstack-claude) - Rigorous agent workflows and engineering-principle skills (`technical-writing` and `unslop` here come from it)
+- [dietrichgebert/ponytail](https://github.com/dietrichgebert/ponytail) - Lazy senior dev mode: the smallest change that fully solves the task
