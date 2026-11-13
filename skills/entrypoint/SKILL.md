@@ -25,6 +25,15 @@ First, read the repo's `AGENTS.md` and `context/` folder if they exist.
 
 Where these skills conflict with superpowers defaults, these win.
 
+## Subagents
+
+Delegate to subagents by default; do the work inline only when it is a handful of tool calls. Pick the model and effort by task:
+
+| Task | Model | Effort |
+|---|---|---|
+| Implementation, writing code, research | Sonnet | medium |
+| Planning, reviewing code, debugging | Opus | high |
+
 ## Red flags
 
 | Thought | Reality |

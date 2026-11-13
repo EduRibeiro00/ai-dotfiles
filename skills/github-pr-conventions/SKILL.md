@@ -74,12 +74,14 @@ before anyone spends time on it.
 gh pr create --draft --base <BASE_BRANCH> --title "<TITLE>" --body-file <BODY_FILE>
 ```
 
-**With reviewers and labels:**
+**With reviewers and labels** — only when the user names the reviewers:
 
 ```
 gh pr create --draft --base <BASE_BRANCH> --title "<TITLE>" --body-file <BODY_FILE> \
   --reviewer <HANDLE_A>,<HANDLE_B> --label <LABEL>
 ```
+
+By default, create PRs with no reviewers and do not ask the user about them.
 
 **Ready for review immediately** — only when the user explicitly asks for it (e.g.
 "open it ready", "not a draft", "request review now"):
@@ -110,22 +112,54 @@ merge order explicitly, since GitHub will not enforce it across repos.
 
 ## Stacked PRs (dependencies)
 
-Express a dependency by targeting the upstream PR's branch as your base:
+Stack only when it is already known that the work ships as several dependent PRs,
+each building on an unmerged one. A single PR, or work with no known follow-up PRs,
+is not a stack: use the normal flow in "Creating a PR". Do not turn it into a stack
+speculatively.
+
+For a stack, use `gh stack` instead of hand-targeting branches. It tracks the chain locally, cascades rebases, and links
+the PRs into a stack on GitHub. Run `gh stack <command> --help` if unsure.
+
+Start the stack from the base branch, one branch per layer (bottom to top):
 
 ```
-gh pr create --draft --base <UPSTREAM_BRANCH> --title "<TITLE>" --body-file <BODY_FILE>
+gh stack init <BRANCH_1>             # new stack; trunk is the default branch
+gh stack add -Am "<COMMIT_MSG>" <BRANCH_2>   # commit staged work, add a layer on top
 ```
 
-The PR then shows only the incremental diff against the upstream branch. Note in the
-description which PR must merge first.
+To adopt branches that already exist: `gh stack init <BRANCH_1> <BRANCH_2> ...`.
+Commit each layer's work on its own branch (`gh stack up`/`down`/`top`/`bottom`
+move between layers; `gh stack view --short` shows the stack).
 
-After the upstream PR merges, verify the dependent PR's base and retarget it if
-needed — do not assume GitHub has done this for you:
+Publish the whole stack as drafts, then replace the auto-generated titles and bodies
+with ones that follow the title and description rules below:
 
 ```
-gh pr view <NUMBER> --json baseRefName -q .baseRefName
-gh pr edit <NUMBER> --base <BASE_BRANCH>
+gh stack submit --auto
+gh pr edit <NUMBER> --title "<TITLE>" --body-file <BODY_FILE>   # once per layer
 ```
+
+Always pass `--auto`: without it `submit` opens an interactive editor. With `--auto`,
+new PRs are created as drafts. Do not add `--open`, which marks them ready for review,
+unless the user asks. Each layer's diff shows
+only its increment. Note in each description which PR sits below it and must merge
+first.
+
+Do not use plain `git push`, `git rebase`, or `gh pr create --base <UPSTREAM_BRANCH>`
+for stack branches: they bypass the stack metadata.
+
+- **Push new commits:** `gh stack push` (atomic, `--force-with-lease`).
+- **Pull in trunk or upstream changes:** `gh stack sync` (fetch, cascade-rebase, push,
+  re-link). On a conflict it restores everything; resolve with `gh stack rebase`, then
+  `gh stack rebase --continue` (or `--abort`).
+- **Change the shape of the stack** (drop, fold, reorder, rename): `gh stack modify`,
+  then `gh stack submit --auto`.
+- **Link PRs you created by other means:** `gh stack link <BRANCH_OR_PR> <BRANCH_OR_PR> ...`
+  (bottom to top).
+
+Merging stays the user's call, including `gh stack merge`. After lower PRs merge,
+run `gh stack sync --prune` to rebase the rest onto the new base, and verify with
+`gh stack view`.
 
 ## PR Title Format
 
@@ -154,6 +188,9 @@ above, prefer the repo's convention.
 
 ## PR Description Format
 
+Invoke the `technical-writing` skill and use it to write the description. Keep it as
+concise and simple as possible.
+
 Before writing the description, check whether the repo defines a PR template:
 
 ```
@@ -176,15 +213,15 @@ If no template exists, use this format:
 
 ### Summary
 
-<overall summary of changes, 3-4 sentences max>
+<overall summary of changes, 3 lines max>
 
 ### Changes
 
-<bullet points describing the most important changes>
+<concise bullet points describing the most important changes, 2 lines max each>
 
 ### Testing
 
-<bullet points describing how the changes were tested>
+<concise bullet points describing how the changes were tested, 2 lines max each>
 
 ### Relevant links
 
@@ -203,7 +240,10 @@ To close an issue on merge, put `Fixes #<N>` or `Closes #<N>` in the body.
 These rules apply regardless of which template shapes the description (the repo's PR
 template or the default format above). Section names vary by template.
 
-- **Keep the PR description concise and high level.**
+- **Keep the PR description as concise and simple as possible, and high level.**
+  Write it with the `technical-writing` skill.
+- **Length limits:** the summary is 3 lines max. Each bullet in "Changes" and
+  "Testing" is 2 lines max.
 - **Audience:** the description is read by reviewers who have no access to the
   author's planning context. NEVER include task-tracker-local information — task
   IDs, epic or sprint names, or links pointing at internal planning artifacts. On a
@@ -222,11 +262,8 @@ template or the default format above). Section names vary by template.
 - **Testing section:** do NOT enumerate unit test cases. State that tests were run
   and are green (unit, build, functional — as applicable). Provide detail ONLY for
   newly created integration-testing setups or manual testing procedures.
-- **Reviewers:** assign reviewers per project/team conventions — NEVER the PR
-  author (GitHub rejects self-review requests anyway). If no reviewer convention is
-  known, ask the user before creating the PR rather than guessing. Check
-  `.github/CODEOWNERS` first; if it covers the changed paths, those owners are
-  requested automatically and no `--reviewer` flag is needed.
+- **Reviewers:** by default, create the PR with no reviewers and do not ask the user
+  about them. Pass `--reviewer` only when the user names reviewers.
 
 ## Checking PR state before updating
 
@@ -262,6 +299,9 @@ Push the new commits, then record the update in the description.
    ```
    git push origin <branch_name>
    ```
+
+   For a stacked PR, use `gh stack push` (or `gh stack sync` to also pick up
+   upstream changes) instead.
 
    Prefer adding commits over amending and force-pushing, so reviewers can see the
    incremental diff and existing comments stay anchored.
