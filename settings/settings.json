@@ -5,6 +5,18 @@
   },
   "skipDangerousModePermissionPrompt": true,
   "theme": "auto",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"SessionStart\",\"additionalContext\":\"Invoke the entrypoint skill via the Skill tool before responding to the user.\"}}'"
+          }
+        ]
+      }
+    ]
+  },
   "permissions": {
     "ask": [
       "Bash(rm *)",
