@@ -11,10 +11,18 @@ Work without the human, keep a record of every judgment call, and stop only when
 
 Before every non-trivial decision, ask: **if this is wrong, can it be undone cheaply, without customer or team impact?**
 
-- **Two-door** (yes): library choice, internal structure, naming, storage shape on an unmerged branch, test layout, anything on a local branch. Decide and keep going.
+- **Two-door** (yes): library choice, internal structure, naming, storage shape on an unmerged branch, test layout, anything on a local branch, commits, pushing feature branches, creating draft PRs. Decide and keep going. Asking for autopilot counts as asking to commit and push these.
 - **One-door** (no): deploys, prod or shared infra/DB changes (migrations, index drops, backfills), deleting data or resources, merging to a branch that auto-deploys, public API/contract changes, anything customers or the wider team see, spending money, sending messages to others.
 
 A one-door decision is not forbidden. It is forbidden **without full context**. If you can verify the facts that make it safe (read-only checks, the spec, the repo), do that first. Still unsure → stop.
+
+**Never alone, even with full context.** Do these only when the user strictly asks for them:
+- Taking a draft PR out of draft (publishing it for review).
+- Merging a PR. Forbidden, full stop.
+- Pushing to `main` or the default branch. Forbidden, full stop.
+- Leaving comments or reviews on PRs or issues, or replying to others.
+
+Context can't make these safe: they notify the team. "Autopilot" is not a request for them. Leave the PR as a draft and report it in the summary.
 
 ## Flow
 
